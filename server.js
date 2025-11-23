@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
+const path = require('path'); // ✅ path require করা হয়েছে
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,11 +18,11 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ Serve static files from "public" folder
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Root route for Vercel / Health check
+// Root route serves the frontend
 app.get('/', (req, res) => {
-  res.send('Server is running!');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Health check
@@ -32,7 +33,6 @@ app.get('/healthz', (req, res) => {
 // Create link
 app.post('/api/links', async (req, res) => {
   const { target, code } = req.body;
-
   if (!target) return res.status(400).json({ error: 'Target URL required' });
 
   const shortCode = code || Math.random().toString(36).substring(2, 8);
