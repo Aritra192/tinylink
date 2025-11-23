@@ -19,6 +19,11 @@ app.use(express.urlencoded({ extended: true }));
 // ✅ Serve static files from "public" folder
 app.use(express.static('public'));
 
+// Root route for Vercel / Health check
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+
 // Health check
 app.get('/healthz', (req, res) => {
   res.json({ ok: true, version: '1.0' });
